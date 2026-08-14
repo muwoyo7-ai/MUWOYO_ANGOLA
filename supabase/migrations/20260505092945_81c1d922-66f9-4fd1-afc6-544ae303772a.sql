@@ -1,0 +1,1 @@
+ALTER TABLE public.instances ADD COLUMN IF NOT EXISTS automation_paused_until timestamptz;

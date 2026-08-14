@@ -1,0 +1,19 @@
+project_id = "twrbtaqugutkbkhizgxd"
+
+[functions.evolution-api]
+verify_jwt = false
+
+[functions.webhook]
+verify_jwt = false
+
+[functions.n8n-callback]
+verify_jwt = false
+
+[functions.admin-users]
+verify_jwt = false
+
+[functions.populate-ai-documents]
+verify_jwt = false
+
+[functions.push-dispatch]
+verify_jwt = false

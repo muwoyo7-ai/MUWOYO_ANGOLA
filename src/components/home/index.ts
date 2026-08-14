@@ -1,0 +1,9 @@
+export { default as TypewriterSection } from "./TypewriterSection";
+export { default as FeaturesZigzag } from "./FeaturesZigzag";
+export { default as IntegrationsSection } from "./IntegrationsSection";
+export { default as AffiliateSection } from "./AffiliateSection";
+export { default as TestimonialsSection } from "./TestimonialsSection";
+export { default as PricingSection } from "./PricingSection";
+export { default as FAQSection } from "./FAQSection";
+export { default as CTASection } from "./CTASection";
+export { default as FeaturesSection } from "./FeaturesSection";
