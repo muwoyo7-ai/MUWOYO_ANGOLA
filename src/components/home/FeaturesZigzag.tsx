@@ -37,29 +37,33 @@ const FeaturesZigzag = () => {
       highlight: "O seu negócio nunca dorme.",
       description:
         "Venda 24h por dia sem depender de dados móveis ou bateria. A Inteligencia Artificial da Muwoyo mantém o seu whatsApp sempre online com atendimento 24/7 ,mesmo que você esteja a dormir ou sem internet. Se o cliente te enviar mensagem às 3h da manhã, ele será respondido e a venda será feita. O seu negócio nunca dorme, para que você possa descansar.",
-      image: sales247,
+      image: "https://i.ibb.co/gMKHJthB/4d8fa698-ae5d-49e6-a3e0-eec9613af22a.png",
       alt: "Vendas 24 horas por dia",
     },
     {
       title: "Painel Muwoyo",
       highlight: "Dashboard de performance. Decisões baseadas em dados.",
       description: `
-        <div class="space-y-4">
-          <div class="space-y-4">
-            <p class="text-gray-600 leading-relaxed">Todas as métricas do teu negócio centralizadas num único painel em tempo real. Acompanhas conversões, receita e comportamento dos clientes sem abrir múltiplas ferramentas.</p>
-            <p class="text-gray-600 leading-relaxed">A IA cadastra cada cliente, preenche os pedidos com nome, localização, contacto e produtos solicitados, e entrega tudo pronto no teu painel. Tu não registas nada manualmente, recebes a lista completa e foca-te apenas na entrega.</p>
-            <p class="text-gray-600 leading-relaxed">Reuniões, atendimentos e reservas são agendados automaticamente pela IA. Recebes uma notificação e acompanhas toda a agenda na palma da mão. Os relatórios diários, semanais e mensais também são gerados sozinhos, com base nos dados reais do teu negócio, sem exportações nem trabalho manual.</p>
-            <p class="text-gray-600 leading-relaxed">Dados reais, decisões mais rápidas e zero operação desnecessária.</p>
+        <div class="space-y-6">
+          <div>
+            <p class="text-gray-600 leading-relaxed">Todas as métricas do teu negócio centralizadas num único painel, em tempo real. Acompanhas conversões, receita e comportamento dos clientes sem abrir múltiplas ferramentas.</p>
+          </div>
+          
+          <div class="border-l-4 border-emerald-500 pl-4">
+            <p class="text-gray-700 font-medium mb-2">A IA cuida de tudo automaticamente:</p>
+            <ul class="space-y-2 text-gray-600">
+              <li class="flex items-start"><span class="text-emerald-600 mr-3">✓</span><span>Regista cada cliente, preenche pedidos com nome, localização, contacto e produtos solicitados</span></li>
+              <li class="flex items-start"><span class="text-emerald-600 mr-3">✓</span><span>Agenda reuniões, atendimentos e reservas automaticamente</span></li>
+              <li class="flex items-start"><span class="text-emerald-600 mr-3">✓</span><span>Gera relatórios diários, semanais e mensais com base nos dados reais do negócio</span></li>
+            </ul>
           </div>
 
-          <!-- Closing Statement -->
-          <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200 text-center">
-            <p class="text-sm text-emerald-800 font-medium">O teu negócio a operar em piloto automático.</p>
-            <p class="text-xs text-emerald-600 mt-1">A Muwoyo trata do atendimento, dos registos e da agenda. Tu foças no que realmente importa a entrega.</p>
+          <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
+            <p class="text-gray-900 leading-relaxed"><span class="text-emerald-700 font-semibold">Dados reais, decisões mais rápidas e zero operação desnecessária.</span> Tu acompanhas o negócio. A Muwoyo trata do atendimento, dos registos e da agenda.</p>
           </div>
         </div>
       `,
-      image: heroWhatsAppStore,
+      image: "https://i.ibb.co/20YbdFNH/8258ccc3-50ce-4dd7-8554-3e52d4af9926.png",
       alt: "Painel Muwoyo",
     },
   ];
@@ -139,7 +143,7 @@ const FeaturesZigzag = () => {
                   <img
                     src={feature.image}
                     alt={feature.alt}
-                    className="w-full h-auto rounded-2xl shadow-2xl max-w-md"
+                    className="w-full h-auto rounded-2xl shadow-2xl max-w-2xl"
                   />
                 </div>
               </>

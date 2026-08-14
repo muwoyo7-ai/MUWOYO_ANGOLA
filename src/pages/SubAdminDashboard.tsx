@@ -53,6 +53,7 @@ export default function SubAdminDashboard() {
   });
   const [notice, setNotice] = useState({ title: "", message: "" });
   const [msg, setMsg] = useState({ userId: "", amount: "" });
+  const [editLimit, setEditLimit] = useState<{ userId: string; limit: string }>({ userId: "", limit: "" });
   const load = async () => {
     if (!user) return;
     const { data } = await sb
@@ -283,6 +284,13 @@ export default function SubAdminDashboard() {
                       Recarregar
                     </Button>
                     <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setEditLimit({ userId: u.user_id, limit: String(u.message_limit || 0) })}
+                    >
+                      Limite
+                    </Button>
+                    <Button
                       size="icon"
                       variant="ghost"
                       onClick={() =>
@@ -375,6 +383,33 @@ export default function SubAdminDashboard() {
             }
           >
             Adicionar
+          </Button>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={!!editLimit.userId}
+        onOpenChange={() => setEditLimit({ userId: "", limit: "" })}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar limite de mensagens</DialogTitle>
+          </DialogHeader>
+          <Input
+            type="number"
+            placeholder="Limite total"
+            value={editLimit.limit}
+            onChange={(e) => setEditLimit({ ...editLimit, limit: e.target.value })}
+          />
+          <Button
+            onClick={() =>
+              call({
+                action: "setMessageLimit",
+                userId: editLimit.userId,
+                limit: Number(editLimit.limit),
+              })
+            }
+          >
+            Guardar
           </Button>
         </DialogContent>
       </Dialog>

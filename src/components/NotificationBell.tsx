@@ -45,7 +45,7 @@ export default function NotificationBell() {
       toast({ title: "Notificação não ativada", description: result.reason, variant: "destructive" });
       return;
     }
-    toast({ title: "Notificações ativadas", description: "Agora o browser pode receber avisos nativos." });
+    toast({ title: "Notificações push ativadas com sucesso", description: "Agora receberás notificações neste dispositivo.", className: "bg-green-50 border-green-200" });
   };
 
   const markRead = async (id: string) => { await supabase.from("notifications").update({ is_read: true }).eq("id", id); load(); };

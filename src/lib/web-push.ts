@@ -14,24 +14,27 @@ export const urlBase64ToUint8Array = (base64String: string) => {
 };
 
 export async function persistPushSubscriptionToSupabase(userId: string | null, subscription: PushSubscription) {
+  const p256dh = subscription.getKey("p256dh");
+  const auth = subscription.getKey("auth");
+
   const payload = {
     user_id: userId,
     endpoint: subscription.endpoint,
-    p256dh: subscription.getKey("p256dh") ? btoa(String.fromCharCode(...new Uint8Array(subscription.getKey("p256dh")!))) : null,
-    auth: subscription.getKey("auth") ? btoa(String.fromCharCode(...new Uint8Array(subscription.getKey("auth")!))) : null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    keys: {
+      p256dh: p256dh ? btoa(String.fromCharCode(...new Uint8Array(p256dh))) : null,
+      auth: auth ? btoa(String.fromCharCode(...new Uint8Array(auth))) : null,
+    },
   };
 
-  const { error } = await supabase
-    .from("web_push_subscriptions")
-    .upsert(payload, { onConflict: "endpoint" });
+  const { data, error } = await supabase.functions.invoke("subscribe", {
+    body: payload,
+  });
 
   if (error) {
     throw new Error(error.message || "Falha ao persistir a subscription do browser.");
   }
 
-  return payload;
+  return data || payload;
 }
 
 export async function notifyBrowserFromApp(title: string, message: string, icon?: string, url?: string) {
@@ -75,11 +78,11 @@ export async function initWebPush() {
     };
   }
 
-  const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+  const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || import.meta.env.VAPID_PUBLIC_KEY;
   if (!vapidPublicKey) {
     return {
       ok: false,
-      reason: "A chave pública VAPID não foi configurada no frontend.",
+      reason: "A chave pública VAPID não foi configurada. Defina VITE_VAPID_PUBLIC_KEY no .env.local e gere as chaves com npx web-push generate-vapid-keys.",
     };
   }
 

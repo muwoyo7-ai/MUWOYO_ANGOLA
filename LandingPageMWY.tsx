@@ -6,9 +6,11 @@ import TypewriterSection from "@/components/home/TypewriterSection";
 import FeaturesZigzag from "@/components/home/FeaturesZigzag";
 import IntegrationsSection from "@/components/home/IntegrationsSection";
 import SetupSection from "@/components/home/SetupSection";
+import FreeMessagesBonus from "@/components/home/FreeMessagesBonus";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import AIAgentDescription from "@/components/home/AIAgentDescription";
 import { MessagePacks } from "@/components/home/MessagePacks";
+import CommunitySection from "@/components/home/CommunitySection";
 import FAQSection from "@/components/home/FAQSection";
 import CTASection from "@/components/home/CTASection";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,7 +37,9 @@ const LandingPageMWY = () => {
         <TestimonialsSection />
         <AIAgentDescription />
         <SetupSection />
+        <FreeMessagesBonus />
         <MessagePacks />
+        <CommunitySection />
         <FAQSection />
         <CTASection />
       </main>

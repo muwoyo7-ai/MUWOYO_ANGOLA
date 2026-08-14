@@ -3,8 +3,9 @@ import { Navigate } from "react-router-dom";
 import { Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import BusinessHoursConfig from "@/components/BusinessHoursConfig";import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useRole } from "@/hooks/useRole";
 import { LegalAcceptance } from "@/components/LegalAcceptance";
@@ -20,8 +21,13 @@ type Field = {
 type Form = {
   business_name: string;
   ai_name: string;
+  transfer_phone: string;
+  ai_personality: string;
   business_description: string;
   ai_rules: string;
+  business_hours: Record<string, { open: boolean; start_time: string; end_time: string }>;
+  appointment_duration_minutes: number;
+  accepts_appointments: boolean;
 };
 
 const STEPS: Field[] = [
@@ -36,6 +42,19 @@ const STEPS: Field[] = [
     label: "Que nome vai dar à sua atendente virtual?",
     placeholder: "Ex: Joana",
     help: "É como os clientes vão chamar a sua IA.",
+  },
+  {
+    key: "transfer_phone",
+    label: "Qual é o número para transferir para atendimento humano?",
+    placeholder: "Ex: +244 9xx xxx xxx",
+    help: "Este número aparece quando a IA precisa encaminhar para pessoa real.",
+  },
+  {
+    key: "ai_personality",
+    label: "Como deve ser a personalidade da IA?",
+    placeholder: "Amigável, profissional, persuasiva, formal…",
+    type: "textarea",
+    help: "Descreva o tom da sua atendente virtual.",
   },
   {
     key: "business_description",
@@ -68,8 +87,21 @@ export default function OnboardingGate({
   const [form, setForm] = useState<Form>({
     business_name: "",
     ai_name: "Muwoyo",
+    transfer_phone: "",
+    ai_personality: "",
     business_description: "",
     ai_rules: "",
+    business_hours: {
+      monday: { open: false, start_time: "08:00", end_time: "17:00" },
+      tuesday: { open: false, start_time: "08:00", end_time: "17:00" },
+      wednesday: { open: false, start_time: "08:00", end_time: "17:00" },
+      thursday: { open: false, start_time: "08:00", end_time: "17:00" },
+      friday: { open: false, start_time: "08:00", end_time: "17:00" },
+      saturday: { open: false, start_time: "09:00", end_time: "14:00" },
+      sunday: { open: false, start_time: "", end_time: "" },
+    },
+    appointment_duration_minutes: 30,
+    accepts_appointments: true,
   });
   const [saving, setSaving] = useState(false);
 
@@ -87,8 +119,13 @@ export default function OnboardingGate({
         setForm({
           business_name: data?.business_name || "",
           ai_name: data?.ai_name || "Muwoyo",
+          transfer_phone: data?.transfer_phone || "",
+          ai_personality: data?.ai_personality || "",
           business_description: data?.business_description || "",
           ai_rules: data?.ai_rules || "",
+          business_hours: data?.business_hours || form.business_hours,
+          appointment_duration_minutes: Number(data?.appointment_duration_minutes ?? 30),
+          accepts_appointments: data?.accepts_appointments ?? true,
         });
         setLoading(false);
       });
@@ -179,7 +216,7 @@ export default function OnboardingGate({
           />
           <div>
             <h1 className="text-3xl font-bold sm:text-4xl">
-              Seja muito bem-vinda à Muwoyo
+              Seja muito bem-vindo(a) à Muwoyo
             </h1>
             <p className="mt-4 text-base text-muted-foreground sm:text-lg leading-relaxed">
               Precisamos que nos forneça algumas informações sobre o seu negócio
@@ -230,7 +267,9 @@ export default function OnboardingGate({
           {current.help && (
             <p className="text-sm text-muted-foreground">{current.help}</p>
           )}
-          {current.type === "textarea" ? (
+          {current.key === "business_hours" ? (
+            <BusinessHoursConfig value={form.business_hours} onChange={(business_hours) => setForm({ ...form, business_hours })} />
+          ) : current.type === "textarea" ? (
             <Textarea
               required
               autoFocus
@@ -254,6 +293,32 @@ export default function OnboardingGate({
             />
           )}
         </div>
+
+        {step === STEPS.length - 1 && (
+          <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <Label className="text-sm font-medium">Aceita agendamentos</Label>
+                <p className="text-xs text-muted-foreground">Permitir que clientes agendem automaticamente.</p>
+              </div>
+              <Switch
+                checked={form.accepts_appointments}
+                onCheckedChange={(checked) => setForm({ ...form, accepts_appointments: !!checked })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Duração média do agendamento (minutos)</Label>
+              <Input
+                type="number"
+                min={10}
+                max={240}
+                value={form.appointment_duration_minutes}
+                onChange={(e) => setForm({ ...form, appointment_duration_minutes: Number(e.target.value || 30) })}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex gap-3">
           {step > 0 && (

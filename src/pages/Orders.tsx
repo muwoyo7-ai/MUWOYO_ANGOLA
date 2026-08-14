@@ -37,6 +37,35 @@ export default function Orders() {
   const [rows, setRows] = useState<Order[]>([]);
   const [open, setOpen] = useState<Order | null>(null);
 
+  const normalizeOrderItems = (value: any): any[] => {
+    if (Array.isArray(value)) return value;
+    if (!value || typeof value !== "object") {
+      if (typeof value === "string" && value.trim()) {
+        try {
+          const parsed = JSON.parse(value);
+          return normalizeOrderItems(parsed);
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    }
+
+    const possibleKeys = ["items", "products", "line_items", "order_items", "cart"];
+    for (const key of possibleKeys) {
+      const candidate = value[key];
+      if (candidate) {
+        const normalized = normalizeOrderItems(candidate);
+        if (normalized.length > 0) return normalized;
+      }
+    }
+
+    if (Array.isArray(value.data)) return value.data;
+    if (Array.isArray(value.result)) return value.result;
+
+    return [];
+  };
+
   const load = async () => {
     if (!user) return;
     const { data } = await supabase
@@ -54,8 +83,7 @@ export default function Orders() {
       } catch {
         // keep original if parse fails
       }
-      // ensure array
-      if (!Array.isArray(items)) items = [];
+      items = normalizeOrderItems(items);
       return { ...r, items };
     });
     setRows(normalized as Order[]);

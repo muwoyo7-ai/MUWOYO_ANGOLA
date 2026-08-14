@@ -155,7 +155,7 @@ Deno.serve(async (req) => {
           email,
           business_name: name,
           created_by: actor.user.id,
-          message_limit: role === "client" ? 1000 : 0,
+          message_limit: role === "client" ? 200 : 0,
           free_messages_granted: role === "client",
           onboarding_completed: role !== "client",
         })
@@ -203,6 +203,31 @@ Deno.serve(async (req) => {
           actor.user.id,
           actor.user.email || "gestor",
           `adicionou ${amount} mensagens ao usuário`,
+        );
+      }
+      return json({ ok: true });
+    }
+
+    if (action === "setMessageLimit") {
+      const userId = allowed(body.userId, 60);
+      const limit = Math.max(0, Math.min(1000000, Number(body.limit || 0)));
+      if (!userId) return json({ error: "invalid_input" }, 400);
+      await admin
+        .from("profiles")
+        .update({ message_limit: limit })
+        .eq("user_id", userId);
+      await admin.from("notifications").insert({
+        user_id: userId,
+        title: "Limite de mensagens atualizado",
+        message: `Seu limite de mensagens foi atualizado para ${limit}.`,
+        type: "limit_updated",
+      });
+      if (actor.role === "sub_admin") {
+        await notifyAdmins(
+          admin,
+          actor.user.id,
+          actor.user.email || "gestor",
+          `alterou o limite de mensagens de um usuário para ${limit}`,
         );
       }
       return json({ ok: true });

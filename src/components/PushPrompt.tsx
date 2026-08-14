@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { initWebPush } from "@/lib/web-push";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PushPrompt() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -17,11 +19,17 @@ export default function PushPrompt() {
 
   const accept = async () => {
     try {
-      await initWebPush();
+      const result = await initWebPush();
+      if (result.ok) {
+        toast({ title: "Notificações push ativadas com sucesso", description: "Agora receberás notificações neste dispositivo.", className: "bg-green-50 border-green-200" });
+      } else {
+        toast({ title: "Notificações não ativadas", description: result.reason, variant: "destructive" });
+      }
       setVisible(false);
       window.localStorage.setItem("muwoyo_push_prompt_dismissed", "1");
     } catch (err) {
       console.error(err);
+      toast({ title: "Erro", description: "Falha ao ativar notificações.", variant: "destructive" });
       setVisible(false);
       window.localStorage.setItem("muwoyo_push_prompt_dismissed", "1");
     }

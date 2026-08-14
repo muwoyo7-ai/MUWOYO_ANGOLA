@@ -29,9 +29,10 @@ export function LegalAcceptance({
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [legalConsent, setLegalConsent] = useState(false);
 
   const handleAccept = async () => {
-    if (!privacyAccepted || !termsAccepted) return;
+    if (!privacyAccepted || !termsAccepted || !legalConsent) return;
 
     setIsLoading(true);
     try {
@@ -90,8 +91,8 @@ export function LegalAcceptance({
             Aceitação Obrigatória de Documentos Legais
           </CardTitle>
           <p className="text-muted-foreground mt-2">
-            Para continuar usando a plataforma Muwoyo, você deve aceitar ambos
-            os documentos abaixo.
+            Ao prosseguir, concorda com as nossas políticas e condições de uso.
+            Pode ler os documentos abaixo e voltar à mesma página quando terminar.
           </p>
         </CardHeader>
         <CardContent>
@@ -110,14 +111,29 @@ export function LegalAcceptance({
             </div>
           </div>
 
+          <div className="mt-8 rounded-lg border bg-muted/20 p-4">
+            <div className="flex items-start gap-3">
+              <input
+                id="legal-consent"
+                type="checkbox"
+                checked={legalConsent}
+                onChange={(e) => setLegalConsent(e.target.checked)}
+                className="mt-1 h-4 w-4"
+              />
+              <label htmlFor="legal-consent" className="text-sm text-foreground">
+                Li e concordo com os Termos de Uso e Política de Privacidade e pretendo continuar.
+              </label>
+            </div>
+          </div>
+
           <div className="mt-8 flex justify-center">
             <Button
               onClick={handleAccept}
-              disabled={!privacyAccepted || !termsAccepted || isLoading}
+              disabled={!privacyAccepted || !termsAccepted || !legalConsent || isLoading}
               size="lg"
               className="px-8"
             >
-              {isLoading ? "Processando..." : "Aceitar e Continuar"}
+              {isLoading ? "Processando..." : "Continuar"}
             </Button>
           </div>
         </CardContent>

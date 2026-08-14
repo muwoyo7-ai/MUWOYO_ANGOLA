@@ -11,8 +11,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { buildProfilePayload } from "@/lib/profile-persistence";
 import { Switch } from "@/components/ui/switch";
-
-const BUSINESS_INFO_DRAFT_KEY = "muwoyo-business-info-draft";
+import {
+  clearBusinessInfoDraft,
+  getBusinessInfoDraftKey,
+  readBusinessInfoDraft,
+  writeBusinessInfoDraft,
+} from "@/lib/business-info-draft";
 
 export default function BusinessInfo() {
   const { user } = useAuth();
@@ -31,37 +35,36 @@ export default function BusinessInfo() {
   const [profileLoaded, setProfileLoaded] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const cached = window.localStorage.getItem(BUSINESS_INFO_DRAFT_KEY);
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        setForm((current) => ({
-          ...current,
-          business_name: parsed.business_name || current.business_name,
-          ai_name: parsed.ai_name || current.ai_name,
-          transfer_phone: parsed.transfer_phone || current.transfer_phone,
-          business_hours: parsed.business_hours ?? current.business_hours,
-          ai_personality: parsed.ai_personality || current.ai_personality,
-          business_description: parsed.business_description || current.business_description,
-          ai_rules: parsed.ai_rules || current.ai_rules,
-          appointment_duration_minutes:
-            parsed.appointment_duration_minutes !== undefined
-              ? Number(parsed.appointment_duration_minutes)
-              : current.appointment_duration_minutes,
-          accepts_appointments:
-            parsed.accepts_appointments !== undefined
-              ? parsed.accepts_appointments
-              : current.accepts_appointments,
-        }));
-      } catch {
-        window.localStorage.removeItem(BUSINESS_INFO_DRAFT_KEY);
-      }
-    }
-  }, []);
+    if (typeof window === "undefined" || !user?.id) return;
+
+    const draftKey = getBusinessInfoDraftKey(user.id);
+    if (!draftKey) return;
+
+    const cached = readBusinessInfoDraft(user.id);
+    if (!cached) return;
+
+    setForm((current) => ({
+      ...current,
+      business_name: cached.business_name || current.business_name,
+      ai_name: cached.ai_name || current.ai_name,
+      transfer_phone: cached.transfer_phone || current.transfer_phone,
+      business_hours: cached.business_hours ?? current.business_hours,
+      ai_personality: cached.ai_personality || current.ai_personality,
+      business_description: cached.business_description || current.business_description,
+      ai_rules: cached.ai_rules || current.ai_rules,
+      appointment_duration_minutes:
+        cached.appointment_duration_minutes !== undefined
+          ? Number(cached.appointment_duration_minutes)
+          : current.appointment_duration_minutes,
+      accepts_appointments:
+        cached.accepts_appointments !== undefined
+          ? cached.accepts_appointments
+          : current.accepts_appointments,
+    }));
+  }, [user?.id]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !profileLoaded) return;
+    if (typeof window === "undefined" || !profileLoaded || !user?.id) return;
 
     const draft = {
       business_name: form.business_name,
@@ -74,8 +77,9 @@ export default function BusinessInfo() {
       appointment_duration_minutes: form.appointment_duration_minutes,
       accepts_appointments: form.accepts_appointments,
     };
-    window.localStorage.setItem(BUSINESS_INFO_DRAFT_KEY, JSON.stringify(draft));
-  }, [profileLoaded, form.business_name, form.ai_name, form.transfer_phone, form.business_hours, form.ai_personality, form.business_description, form.ai_rules, form.appointment_duration_minutes, form.accepts_appointments]);
+
+    writeBusinessInfoDraft(user.id, draft);
+  }, [profileLoaded, user?.id, form.business_name, form.ai_name, form.transfer_phone, form.business_hours, form.ai_personality, form.business_description, form.ai_rules, form.appointment_duration_minutes, form.accepts_appointments]);
 
   useEffect(() => {
     if (!user) return;
@@ -103,17 +107,7 @@ export default function BusinessInfo() {
         return;
       }
 
-      let cached: any = null;
-      if (typeof window !== "undefined") {
-        const raw = window.localStorage.getItem(BUSINESS_INFO_DRAFT_KEY);
-        if (raw) {
-          try {
-            cached = JSON.parse(raw);
-          } catch {
-            cached = null;
-          }
-        }
-      }
+      const cached = readBusinessInfoDraft(user.id);
 
       setForm((current) => ({
         ...current,
@@ -157,9 +151,7 @@ export default function BusinessInfo() {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
       return { error };
     }
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(BUSINESS_INFO_DRAFT_KEY);
-    }
+    clearBusinessInfoDraft(user.id);
     toast({ title: "Guardado", description: "Informações atualizadas com sucesso." });
     return {};
   };

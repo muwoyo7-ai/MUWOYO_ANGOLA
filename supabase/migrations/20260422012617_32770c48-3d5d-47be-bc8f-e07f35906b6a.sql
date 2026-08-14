@@ -4,7 +4,7 @@ ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS free_messages_granted BOOLEAN DEFAULT false;
 
 ALTER TABLE public.profiles
-  ALTER COLUMN message_limit SET DEFAULT 500,
+  ALTER COLUMN message_limit SET DEFAULT 200,
   ALTER COLUMN messages_received SET DEFAULT 0;
 
 CREATE UNIQUE INDEX IF NOT EXISTS profiles_user_id_unique ON public.profiles(user_id);

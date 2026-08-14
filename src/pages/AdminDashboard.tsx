@@ -86,6 +86,7 @@ export default function AdminDashboard() {
   });
   const [edit, setEdit] = useState<Row | null>(null);
   const [msg, setMsg] = useState({ userId: "", amount: "" });
+  const [editLimit, setEditLimit] = useState<{ userId: string; limit: string }>({ userId: "", limit: "" });
   
   const load = async () => {
     const { data: profiles } = await sb
@@ -436,6 +437,7 @@ export default function AdminDashboard() {
         rows={filtered}
         onEdit={setEdit}
         onMsg={(u) => setMsg({ userId: u.user_id, amount: "" })}
+        onEditLimit={(u) => setEditLimit({ userId: u.user_id, limit: String(u.message_limit || 0) })}
         onSuspend={(u) =>
           call({
             action: "suspendUser",
@@ -454,6 +456,7 @@ export default function AdminDashboard() {
         )}
         onEdit={setEdit}
         onMsg={() => {}}
+        onEditLimit={(u) => setEditLimit({ userId: u.user_id, limit: String(u.message_limit || 0) })}
         onSuspend={(u) =>
           call({
             action: "suspendUser",
@@ -590,6 +593,17 @@ export default function AdminDashboard() {
           })
         }
       />
+      <LimitDialog
+        state={editLimit}
+        setState={setEditLimit}
+        onSave={() =>
+          call({
+            action: "setMessageLimit",
+            userId: editLimit.userId,
+            limit: Number(editLimit.limit),
+          })
+        }
+      />
     </AdminShell>
   );
 }
@@ -649,7 +663,7 @@ function UserDialog({ title, form, setForm, onSubmit }: any) {
     </DialogContent>
   );
 }
-function UserTable({ title, rows, onEdit, onMsg, onSuspend, onDelete }: any) {
+function UserTable({ title, rows, onEdit, onMsg, onEditLimit, onSuspend, onDelete }: any) {
   return (
     <Card>
       <CardHeader>
@@ -695,6 +709,9 @@ function UserTable({ title, rows, onEdit, onMsg, onSuspend, onDelete }: any) {
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => onMsg(u)}>
                     Mensagens
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => onEditLimit(u)}>
+                    Limite
                   </Button>
                   <Button
                     size="icon"
@@ -781,6 +798,27 @@ function MsgDialog({ state, setState, onSave }: any) {
           onChange={(e) => setState({ ...state, amount: e.target.value })}
         />
         <Button onClick={onSave}>Adicionar</Button>
+      </DialogContent>
+    </Dialog>
+  );
+}
+function LimitDialog({ state, setState, onSave }: any) {
+  return (
+    <Dialog
+      open={!!state.userId}
+      onOpenChange={() => setState({ userId: "", limit: "" })}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Editar limite de mensagens</DialogTitle>
+        </DialogHeader>
+        <Input
+          type="number"
+          placeholder="Limite total"
+          value={state.limit}
+          onChange={(e) => setState({ ...state, limit: e.target.value })}
+        />
+        <Button onClick={onSave}>Guardar</Button>
       </DialogContent>
     </Dialog>
   );
