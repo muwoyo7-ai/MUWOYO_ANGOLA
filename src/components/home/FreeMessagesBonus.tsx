@@ -6,7 +6,7 @@ export default function FreeMessagesBonus() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 lg:py-28 bg-gradient-to-br from-emerald-50 to-emerald-100/50 relative overflow-hidden">
+    <section id="bonus" className="py-20 lg:py-28 bg-gradient-to-br from-emerald-50 to-emerald-100/50 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-400 rounded-full blur-3xl" />

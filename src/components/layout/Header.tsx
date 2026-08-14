@@ -34,7 +34,10 @@ const Header = () => {
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/#funcionalidades", label: "Funcionalidades", scrollTo: "funcionalidades" },
     { href: "/#messages", label: "Planos", scrollTo: "messages" },
+    { href: "/#bonus", label: "Bónus", scrollTo: "bonus" },
+    { href: "/#comunidade", label: "Comunidade", scrollTo: "comunidade" },
     { href: "/#depoimentos", label: "Depoimentos", scrollTo: "depoimentos" },
   ];
 

@@ -105,10 +105,20 @@ export default function HumanTransfers() {
                     <div>
                       <div className="flex items-center gap-2">
                         <div className="font-semibold text-foreground">{row.customer_name || "Cliente"}</div>
-                        <span className={`rounded-full px-2 py-1 text-[11px] font-semibold ${row.transfer_status === "on" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
-                          {row.transfer_status === "on" ? "ON" : "OFF"}
-                        </span>
                       </div>
+                      {row.transfer_status === "on" && (
+                        <div className="mt-2 rounded-lg bg-emerald-50 border border-emerald-200 p-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-600"></div>
+                            <span className="text-sm font-semibold text-emerald-700">Atendimento transferido para humano</span>
+                          </div>
+                          {row.transfer_reason && (
+                            <div className="mt-2 text-sm text-emerald-600 ml-4">
+                              <span className="font-medium">Motivo:</span> {row.transfer_reason}
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <div className="mt-1 text-sm text-muted-foreground">
                         {row.customer_phone || "Sem telefone"}
                       </div>
@@ -123,9 +133,6 @@ export default function HumanTransfers() {
                         <Phone className="mr-2 h-4 w-4" />
                         WhatsApp
                       </Button>
-                      <div className="rounded-md bg-accent/50 px-3 py-2 text-xs text-muted-foreground">
-                        {row.transfer_reason || "Sem motivo"}
-                      </div>
                     </div>
                   </div>
                 </div>
